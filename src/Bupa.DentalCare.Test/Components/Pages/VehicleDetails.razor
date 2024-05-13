@@ -1,0 +1,41 @@
+﻿@page "/vehicle-details/{registrationNumber}"
+@using Bupa.DentalCare.Test.Store
+@using Bupa.DentalCare.Test.Store.VehicleUseCase
+@using Fluxor
+@inject IDispatcher Dispatcher
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject NavigationManager NavigationManager
+
+@if (State.Value.IsLoading)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+}
+else
+{
+    <div class="d-flex flex-column">
+        <MudText Class="d-block pa-2" Typo="Typo.h2">MOT Report for Vehicle @State.Value.VehicleDetails?.Registration </MudText>
+        <div class="d-flex flex-column align-center justify-center mud-width-full">
+            <MudText Class="d-block pa-2" Typo="Typo.body1">Make: @State.Value.VehicleDetails.Make</MudText>
+            <MudText Class="d-block pa-2" Typo="Typo.body1">Model: @State.Value.VehicleDetails.Model</MudText>
+            <MudText Class="d-block pa-2" Typo="Typo.body1">Color: @State.Value.VehicleDetails.PrimaryColour</MudText>
+            <MudText Class="d-block pa-2" Typo="Typo.body1">Expiry Date: @State.Value.VehicleDetails.MotTests.FirstOrDefault().ExpiryDate.ToString("dd/MM/yyyy")</MudText>
+            <MudText Class="d-block pa-2" Typo="Typo.body1">Mileage on last test: @State.Value.VehicleDetails.MotTests.FirstOrDefault().OdometerValue Miles</MudText>
+        </div>
+        <MudButton Class="mt-4" OnClick="@(() => NavigationManager.NavigateTo("/"))"  Variant="Variant.Filled">Start New Search</MudButton>
+    </div>
+    
+
+}
+
+
+
+@code {
+    [Inject] private IState<VehicleState> State { get; set; }
+    [Parameter] public string RegistrationNumber { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Dispatcher.Dispatch(new FetchVehicleAction(RegistrationNumber));
+        base.OnInitialized();
+    }
+}

@@ -1,0 +1,38 @@
+﻿@page "/"
+@using Bupa.DentalCare.Test.Models
+@using Bupa.DentalCare.Test.Models.Validators
+@using Bupa.DentalCare.Test.Store
+@using Fluxor
+
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<PageTitle>Bupa Dental Care - Robin Davis Test</PageTitle>
+
+<div class="d-flex flex-column">
+    <MudForm Model="@RegistrationNumberDto" @ref="submitRegistrationNumberForm" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+        <MudText Class="d-block pa-2" Typo="Typo.h1">MOT Checker</MudText>
+        <MudTextField For="@(() => RegistrationNumberDto.RegistrationNumber)" Class="d-block pa-2" @bind-Value="@RegistrationNumberDto.RegistrationNumber" Immediate="true" Variant="Variant.Outlined" Label="Please Enter Your Registration Number" InputType="InputType.Text"></MudTextField>
+    </MudForm>
+    <MudButton Class="mt-4" OnClick="@(async () => await Submit())"  Variant="Variant.Filled">SEARCH</MudButton>
+</div>
+
+
+@code {
+    public RegistrationNumberDto RegistrationNumberDto { get; set; } = new ();
+    
+    private RegistrationNumberDtoValidator Validator { get; set; } = new ();
+    MudForm submitRegistrationNumberForm { get; set; }
+    
+    private async Task Submit()
+    {
+        await submitRegistrationNumberForm.Validate();
+
+        if (submitRegistrationNumberForm.IsValid)
+        {
+            NavigationManager.NavigateTo($"/vehicle-details/{RegistrationNumberDto.RegistrationNumber}");
+        }
+        
+    }
+}
